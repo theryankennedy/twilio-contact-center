@@ -5,7 +5,7 @@ The Twilio Contact Center demo is reference architecture for building a modern c
 
 **Note:** We have done the basic work from an UX perspective and lot of opportunities remains to improve on it. Application security implementation is minimal as well in the demo.
 
-This application is provided as-is.  Twilio does not officially support it.
+This application is provided as is.  Twilio does not officially support it.
 
 # Features
 * Twilio Account
@@ -35,7 +35,7 @@ Customer Fill out online web chat request form -> Customer request detected -> T
 Customer Fill out online video chat request form -> Customer request detected -> TaskRouter -> Find Available Agent -> Start video chat between Agent and Customer (Video)
 
 ## Operational Analytics/Dashboard (future):
-Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.) 
+Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.)
 
 ## Pre-requisites:
 * Basic of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
@@ -64,7 +64,7 @@ This will install the application and all the dependencies on Heroku (login requ
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nash-md/twilio-contact-center)
 
-After the installation has completed please open `https://<your_application_name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your_application_name>.herokuapp.com`. 
+After the installation has completed please open `https://<your_application_name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your_application_name>.herokuapp.com`.
 
 ## Manual Install - On Your Own Server
 
@@ -119,4 +119,3 @@ git push origin [YOUR BRANCH] -f
 # License
 
 MIT
-
