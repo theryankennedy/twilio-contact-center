@@ -82,6 +82,7 @@ router.route('/ivr/create-task').get(ivr.createTask)
 var taskrouter = require('./controllers/taskrouter.js')
 
 router.route('/taskrouter/assignment').post(taskrouter.assignment)
+router.route('/taskrouter/taskrouterEventCallBack').post(taskrouter.taskrouterEventCallBack)
 
 var workers = require('./controllers/workers.js')
 

@@ -30,6 +30,7 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "pg": "^4.5.6",
+    "request-promise": "^4.1.1",
     "twilio": "^2.9.x"
   },
   "devDependencies": {
