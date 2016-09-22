@@ -1,4 +1,4 @@
-var app = angular.module('administrationApplication', ['checklist-model']);
+var app = angular.module('administrationApplication', ['checklist-model', 'chart.js']);
 
 app.controller('AdministrationController', function ($scope, $http, $log) {
 
@@ -12,6 +12,64 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
       video: 'Video'
     };
 
+    $scope.syncDoc = null;
+    $scope.stats = {};
+
+    $scope.activity_statistics_labels;
+    $scope.activity_statistics_data;
+    $scope.tasks_by_status_labels;
+    $scope.tasks_by_status_data;
+
+    // get a sync access token
+    $http.get('https://rkennedy2.ngrok.io/token')
+      .then(function onSuccess(response) {
+
+        const accessManager = new Twilio.AccessManager(response.data.token);
+        $scope.client = new Twilio.Sync.Client(accessManager);
+
+        $log.log('got the token');
+
+        // get the document
+        $scope.client.document('WorkspaceStats').then(function(doc) {
+
+          // store it
+          $scope.syncDoc = doc;
+          $scope.stats = $scope.syncDoc.get();
+
+          // charts!
+          $scope.activity_statistics_labels = $scope.stats.realtime.activity_statistics.map(x => x.friendly_name);
+          $scope.activity_statistics_data = $scope.stats.realtime.activity_statistics.map(x => x.workers);
+
+          $scope.tasks_by_status_labels = ['reserved', 'pending', 'assigned'];
+          $scope.tasks_by_status_data = [$scope.stats.realtime.tasks_by_status.reserved,
+                                          $scope.stats.realtime.tasks_by_status.pending,
+                                          $scope.stats.realtime.tasks_by_status.assigned];
+
+
+          $scope.$apply();
+
+          // Let's subscribe to changes on this document, so when something
+          // changes on this document, we can trigger our UI to update
+          $scope.syncDoc.on('updated', function(data) {
+            $scope.stats = data;
+
+            // charts!
+            $scope.activity_statistics_labels = $scope.stats.realtime.activity_statistics.map(x => x.friendly_name);
+            $scope.activity_statistics_data = $scope.stats.realtime.activity_statistics.map(x => x.workers);
+
+            $scope.tasks_by_status_labels = ['reserved', 'pending', 'assigned'];
+            $scope.tasks_by_status_data = [$scope.stats.realtime.tasks_by_status.reserved,
+                                            $scope.stats.realtime.tasks_by_status.pending,
+                                            $scope.stats.realtime.tasks_by_status.assigned];
+
+            $scope.$apply();
+          }, function onError(response) {
+            alert(response.data);
+          });
+
+      });
+    });
+
     $scope.createForm = false;
     $scope.configuration = null;
     $scope.agent = { channels: []};
@@ -22,8 +80,8 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
         $scope.configuration = response.data;
         $scope.listWorkers();
-        
-      }, function onError(response) { 
+
+      }, function onError(response) {
 
         alert(response.data);
 
@@ -55,18 +113,18 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
         for (i = 0; i < worker.attributes.channels.length; i++) {
           worker.channelsFriendlyName += $scope.channels[worker.attributes.channels[i]];
-          
+
           if(i < (worker.attributes.channels.length -1)){
             worker.channelsFriendlyName += ', ';
           }
 
-        }    
-    
+        }
+
         $scope.workers.push(worker);
 
       });
-      
-    }, function onError(response) { 
+
+    }, function onError(response) {
 
       alert(response.data);
 
@@ -82,15 +140,15 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
   $scope.createWorker = function(){
 
-    var attributes = { 
-      contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(), 
-      channels: $scope.agent.channels, 
+    var attributes = {
+      contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(),
+      channels: $scope.agent.channels,
       team: $scope.agent.team
     };
 
-    var worker =  { 
-      friendlyName:  $scope.agent.friendlyName, 
-      attributes: JSON.stringify(attributes) 
+    var worker =  {
+      friendlyName:  $scope.agent.friendlyName,
+      attributes: JSON.stringify(attributes)
     };
 
     $http.post('/api/workers', worker)
@@ -103,8 +161,8 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
         $scope.agent = { channels: []};
 
         $scope.listWorkers();
-        
-      }, function onError(response) { 
+
+      }, function onError(response) {
 
         $log.error(response);
         alert(response.data);
@@ -117,12 +175,12 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
     for (var i = 0; i < $scope.workers.length; i++) {
 
-      if($scope.workers[i].sid == worker.sid){            
-        $scope.workers.splice(i, 1);    
+      if($scope.workers[i].sid == worker.sid){
+        $scope.workers.splice(i, 1);
         break;
       }
 
-    } 
+    }
 
     $http.delete('/api/workers/' + worker.sid);
 
@@ -167,8 +225,8 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
         $log.log('setup saved');
         $log.log(response.data);
-        
-      }, function onError(response) { 
+
+      }, function onError(response) {
 
         alert(response.data);
 
@@ -176,4 +234,4 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
   };
 
-}); 
+});
