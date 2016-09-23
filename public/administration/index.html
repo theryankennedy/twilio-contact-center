@@ -21,14 +21,26 @@
 
         <div class="col-md-6">
           <canvas id="activity_statistics" class="chart chart-pie"
-            chart-data="activity_statistics_data" chart-labels="activity_statistics_labels" chart-options="options">
+            chart-data="activity_statistics_data" chart-labels="activity_statistics_labels" chart-options="activity_statistics_options">
           </canvas>
         </div>
+
         <div class="col-md-6">
-          <canvas id="tasks_by_status" class="chart chart-pie"
-            chart-data="tasks_by_status_data" chart-labels="tasks_by_status_labels" chart-options="options">
+           <canvas id="tasks_by_status" class="chart chart-bar"
+                chart-data="tasks_by_status_data" chart-labels="tasks_by_status_labels" chart-options="tasks_by_status_options">
           </canvas>
         </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-12">
+           <canvas id="bar-chart" class="chart chart-bar"
+                chart-data="bar_chart_data" chart-labels="bar_chart_labels" chart-options="bar_chart_options">
+          </canvas>
+        </div>
+
 
       </div>
 
@@ -153,7 +165,7 @@
 
 
   <div class="row">
-    {{stats}}
+    
   </div>
 
 </section>

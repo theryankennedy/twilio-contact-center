@@ -16,11 +16,13 @@ module.exports.taskrouterEventCallBack = function (req, res) {
 	const workspaceSid = process.env.TWILIO_WORKSPACE_SID;
 	const syncAppSid = req.configuration.twilio.syncAppSid;
 
+	const minutes = 480;
+
 console.log(req.body);
-	const workspaceStatsUrl = `https://${apiKey}:${apiSecret}@taskrouter.twilio.com/v1/Workspaces/${workspaceSid}/Statistics`
+	const workspaceStatsUrl = `https://${apiKey}:${apiSecret}@taskrouter.twilio.com/v1/Workspaces/${workspaceSid}/Statistics?Minutes=480`
 		request({ url: workspaceStatsUrl, method: 'GET' })
 			.then(response => {
-console.log('in response');
+				console.log('in response');
 				// update sync doc
 				const docName = 'WorkspaceStats';
 				const url = `https://${apiKey}:${apiSecret}@preview.twilio.com/Sync/Services/${syncAppSid}/Documents/${docName}`

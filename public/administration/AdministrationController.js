@@ -17,8 +17,47 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
     $scope.activity_statistics_labels;
     $scope.activity_statistics_data;
+    $scope.activity_statistics_options = {
+      title: {
+        display : true,
+        text : "agent status"
+      }
+    }
+
     $scope.tasks_by_status_labels;
     $scope.tasks_by_status_data;
+    $scope.tasks_by_status_options = {
+        title: {
+          display : true,
+          text : "current calls"
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    suggestedMax: 10
+                }
+            }]
+        }
+    };
+
+    $scope.bar_chart_labels;
+    $scope.bar_chart_data;
+
+    $scope.bar_chart_options = {
+      title: {
+        display : true,
+        text : "completed calls"
+      },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    suggestedMax: 20
+                }
+            }]
+        }
+    };
 
     // get a sync access token
     $http.get('https://rkennedy2.ngrok.io/token')
@@ -45,6 +84,24 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
                                           $scope.stats.realtime.tasks_by_status.pending,
                                           $scope.stats.realtime.tasks_by_status.assigned];
 
+          let cumulative = $scope.stats.cumulative;
+          $scope.bar_chart_labels = [
+            "tasks_created",
+            "tasks_completed",
+            "tasks_canceled",
+            "reservations_created",
+            "reservations_accepted",
+            "reservations_timed_out"
+          ];
+          $scope.bar_chart_data = [
+              cumulative.tasks_created,
+              cumulative.tasks_completed,
+              cumulative.tasks_canceled,
+              cumulative.reservations_created,
+              cumulative.reservations_accepted,
+              cumulative.reservations_timed_out
+          ];
+
 
           $scope.$apply();
 
@@ -56,6 +113,24 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
             // charts!
             $scope.activity_statistics_labels = $scope.stats.realtime.activity_statistics.map(x => x.friendly_name);
             $scope.activity_statistics_data = $scope.stats.realtime.activity_statistics.map(x => x.workers);
+
+            let cumulative = $scope.stats.cumulative;
+            $scope.bar_chart_labels = [
+              "tasks_created",
+              "tasks_completed",
+              "tasks_canceled",
+              "reservations_created",
+              "reservations_accepted",
+              "reservations_timed_out"
+            ];
+            $scope.bar_chart_data = [
+                cumulative.tasks_created,
+                cumulative.tasks_completed,
+                cumulative.tasks_canceled,
+                cumulative.reservations_created,
+                cumulative.reservations_accepted,
+                cumulative.reservations_timed_out
+            ];
 
             $scope.tasks_by_status_labels = ['reserved', 'pending', 'assigned'];
             $scope.tasks_by_status_data = [$scope.stats.realtime.tasks_by_status.reserved,
