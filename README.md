@@ -1,3 +1,20 @@
+## UPDATES from SE hackathon on 9/23/16
+* Added realtime dashboard components on administration page
+* Twilio Sync integration to power the dashboard
+
+### extra setup (after usual app setup)
+* create a sync application (currently only possible via api)
+* manually add syncAppSid to configuration.json (in twilio section, user in taskrouter.js controller line 17)
+* create a sync document named WorkspaceStats (hardcoded on front and backend)
+* stand up and run a seperate sync token server (couldn't integrate because of version issues)
+* change sync token server url hardcoded in code (AdministrationController line 63)
+* set taskrouter workspace EventCallbackUrl to api/taskrouter/taskrouterEventCallBack and select all events (in console)
+* npm install to get request-promise
+
+### new components
+* angular-chart: https://jtblin.github.io/angular-chart.js/#getting_started
+
+
 # Twilio Contact Center Demo
 Essence of a modern contact center is to serve customers on multiple channels (voice, IP messaging, video, SMS, email, social media, etc.), allow them to move seamlessly across channels and most importantly maintain context of the conversations.
 
