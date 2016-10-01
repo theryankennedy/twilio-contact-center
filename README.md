@@ -1,4 +1,4 @@
-## UPDATES from SE hackathon on 9/23/16
+## UPDATES - still in progress
 * Added realtime dashboard components on administration page
 * Twilio Sync integration to power the dashboard
 
@@ -25,7 +25,7 @@ curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_APP_SID/Docum
  -d 'Data={}'  \
  -u $TWILIO_API_KEY:$TWILIO_API_SECRET
 ```
-* stand up and run a seperate sync token server (couldn't integrate because of version issues)
+* stand up and run a separate sync token server (couldn't integrate because of version issues)
 * change sync token server url hardcoded in code (AdministrationController line 63)
 * set taskrouter workspace EventCallbackUrl to api/taskrouter/taskrouterEventCallBack and select all events (in console)
 * npm install to get request-promise
