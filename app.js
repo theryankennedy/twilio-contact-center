@@ -2,6 +2,7 @@ var express       = require('express')
 var bodyParser    = require('body-parser')
 var sessions      = require('express-session')
 var compression   = require('compression')
+const path 				= require('path')
 
 /* check if the application runs on heroku */
 var util
@@ -83,6 +84,7 @@ var taskrouter = require('./controllers/taskrouter.js')
 
 router.route('/taskrouter/assignment').post(taskrouter.assignment)
 router.route('/taskrouter/taskrouterEventCallBack').post(taskrouter.taskrouterEventCallBack)
+router.route('/taskrouter/updatesync').get(taskrouter.updatesync)
 
 var workers = require('./controllers/workers.js')
 
@@ -98,6 +100,7 @@ router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
+app.use('/bower_components',  express.static( path.join(__dirname, '/bower_components')))
 
 app.listen(app.get('port'), function () {
 	console.log('magic happens on port', app.get('port'))

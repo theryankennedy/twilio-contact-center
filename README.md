@@ -3,9 +3,28 @@
 * Twilio Sync integration to power the dashboard
 
 ### extra setup (after usual app setup)
-* create a sync application (currently only possible via api)
-* manually add syncAppSid to configuration.json (in twilio section, user in taskrouter.js controller line 17)
-* create a sync document named WorkspaceStats (hardcoded on front and backend)
+* create a sync service instance (currently only possible via api)
+```
+curl -X POST https://preview.twilio.com/Sync/Services \
+ -d 'FriendlyName=ContactCenterSyncServiceInstance' \
+ -u $TWILIO_API_KEY:$TWILIO_API_SECRET
+```
+* add syncAppSid to configuration.json (in twilio section, user in taskrouter.js controller line 17)
+* add $TWILIO_SYNC_APP_SID to your environmental variables
+* create a sync document named WorkspaceStats
+```
+curl -X POST https://preview.twilio.com/Sync/Services/{syncServiceSid}/Documents \
+ -d 'UniqueName=WorkspaceStats' \
+ -d 'Data={}'  \
+ -u $TWILIO_API_KEY:$TWILIO_API_SECRET
+```
+* create a sync document named PhoneTaskQueueStats
+```
+curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_APP_SID/Documents \
+ -d 'UniqueName=PhoneTaskQueueStats' \
+ -d 'Data={}'  \
+ -u $TWILIO_API_KEY:$TWILIO_API_SECRET
+```
 * stand up and run a seperate sync token server (couldn't integrate because of version issues)
 * change sync token server url hardcoded in code (AdministrationController line 63)
 * set taskrouter workspace EventCallbackUrl to api/taskrouter/taskrouterEventCallBack and select all events (in console)

@@ -1,4 +1,4 @@
-var app = angular.module('administrationApplication', ['checklist-model', 'chart.js']);
+var app = angular.module('administrationApplication', ['checklist-model', 'chart.js', 'timer']);
 
 app.controller('AdministrationController', function ($scope, $http, $log) {
 
@@ -12,8 +12,18 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
       video: 'Video'
     };
 
+
     $scope.syncDoc = null;
     $scope.stats = {};
+    $scope.phoneQueueDoc = null;
+    $scope.phoneQueueStats = {};
+
+    $scope.longest_task = {
+      name : "",
+      sid : "",
+      age: "",
+      startTime: 0
+    };
 
     $scope.activity_statistics_labels;
     $scope.activity_statistics_data;
@@ -59,90 +69,63 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
         }
     };
 
+    // update get the latest data into sync
+    $http.get('/api/taskrouter/updatesync')
+
     // get a sync access token
     $http.get('https://rkennedy2.ngrok.io/token')
       .then(function onSuccess(response) {
 
         const accessManager = new Twilio.AccessManager(response.data.token);
         $scope.client = new Twilio.Sync.Client(accessManager);
+        $log.log('sync client has initialized');
 
-        $log.log('got the token');
-
-        // get the document
-        $scope.client.document('WorkspaceStats').then(function(doc) {
+        // get the WorkspaceStats document
+        $scope.client.document('WorkspaceStats')
+        .then(function(doc) {
 
           // store it
           $scope.syncDoc = doc;
-          $scope.stats = $scope.syncDoc.get();
 
-          // charts!
-          $scope.activity_statistics_labels = $scope.stats.realtime.activity_statistics.map(x => x.friendly_name);
-          $scope.activity_statistics_data = $scope.stats.realtime.activity_statistics.map(x => x.workers);
-
-          $scope.tasks_by_status_labels = ['reserved', 'pending', 'assigned'];
-          $scope.tasks_by_status_data = [$scope.stats.realtime.tasks_by_status.reserved,
-                                          $scope.stats.realtime.tasks_by_status.pending,
-                                          $scope.stats.realtime.tasks_by_status.assigned];
-
-          let cumulative = $scope.stats.cumulative;
-          $scope.bar_chart_labels = [
-            "tasks_created",
-            "tasks_completed",
-            "tasks_canceled",
-            "reservations_created",
-            "reservations_accepted",
-            "reservations_timed_out"
-          ];
-          $scope.bar_chart_data = [
-              cumulative.tasks_created,
-              cumulative.tasks_completed,
-              cumulative.tasks_canceled,
-              cumulative.reservations_created,
-              cumulative.reservations_accepted,
-              cumulative.reservations_timed_out
-          ];
-
-
-          $scope.$apply();
+          // get the initial data
+          $scope.getWorkspaceData();
 
           // Let's subscribe to changes on this document, so when something
           // changes on this document, we can trigger our UI to update
           $scope.syncDoc.on('updated', function(data) {
             $scope.stats = data;
 
-            // charts!
-            $scope.activity_statistics_labels = $scope.stats.realtime.activity_statistics.map(x => x.friendly_name);
-            $scope.activity_statistics_data = $scope.stats.realtime.activity_statistics.map(x => x.workers);
+            // get the initial data
+            $scope.getWorkspaceData();
 
-            let cumulative = $scope.stats.cumulative;
-            $scope.bar_chart_labels = [
-              "tasks_created",
-              "tasks_completed",
-              "tasks_canceled",
-              "reservations_created",
-              "reservations_accepted",
-              "reservations_timed_out"
-            ];
-            $scope.bar_chart_data = [
-                cumulative.tasks_created,
-                cumulative.tasks_completed,
-                cumulative.tasks_canceled,
-                cumulative.reservations_created,
-                cumulative.reservations_accepted,
-                cumulative.reservations_timed_out
-            ];
-
-            $scope.tasks_by_status_labels = ['reserved', 'pending', 'assigned'];
-            $scope.tasks_by_status_data = [$scope.stats.realtime.tasks_by_status.reserved,
-                                            $scope.stats.realtime.tasks_by_status.pending,
-                                            $scope.stats.realtime.tasks_by_status.assigned];
-
-            $scope.$apply();
           }, function onError(response) {
             alert(response.data);
           });
+        });
 
-      });
+        // get the PhoneQueueStats document
+        $scope.client.document('PhoneTaskQueueStats')
+        .then(function(doc) {
+
+          // store it
+          $scope.phoneQueueDoc = doc;
+
+          // get the initial data
+          $scope.getPhoneTaskQueueData();
+
+          // Let's subscribe to changes on this document, so when something
+          // changes on this document, we can trigger our UI to update
+          $scope.phoneQueueDoc.on('updated', function(data) {
+            $scope.phoneQueueStats = data;
+
+            // get the initial data
+            $scope.getPhoneTaskQueueData();
+
+          }, function onError(response) {
+            alert(response.data);
+          });
+        });
+
     });
 
     $scope.createForm = false;
@@ -163,6 +146,69 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
       });
 
   };
+
+  $scope.getWorkspaceData = function() {
+    $scope.stats = $scope.syncDoc.get();
+
+    // charts!
+    $scope.activity_statistics_labels = $scope.stats.realtime.activity_statistics.map(x => x.friendly_name);
+    $scope.activity_statistics_data = $scope.stats.realtime.activity_statistics.map(x => x.workers);
+
+    $scope.tasks_by_status_labels = ['reserved', 'pending', 'assigned'];
+    $scope.tasks_by_status_data = [$scope.stats.realtime.tasks_by_status.reserved,
+                                    $scope.stats.realtime.tasks_by_status.pending,
+                                    $scope.stats.realtime.tasks_by_status.assigned];
+
+    let cumulative = $scope.stats.cumulative;
+    $scope.bar_chart_labels = [
+      "tasks_created",
+      "tasks_completed",
+      "tasks_canceled",
+      "reservations_created",
+      "reservations_accepted",
+      "reservations_timed_out"
+    ];
+    $scope.bar_chart_data = [
+        cumulative.tasks_created,
+        cumulative.tasks_completed,
+        cumulative.tasks_canceled,
+        cumulative.reservations_created,
+        cumulative.reservations_accepted,
+        cumulative.reservations_timed_out
+    ];
+
+    // longest call waiting
+    //$scope.longest_task.sid = $scope.stats.realtime.longest_task_waiting_sid;
+    //$scope.longest_task.age = $scope.stats.realtime.longest_task_waiting_age;
+    //$scope.longest_task.startTime = Date.now() + (Number($scope.stats.realtime.longest_task_waiting_age) * 1000);
+
+    $scope.$apply();
+  }
+
+  $scope.getPhoneTaskQueueData = function() {
+    $scope.phoneQueueStats = $scope.phoneQueueDoc.get();
+
+    // longest call waiting
+    $scope.longest_task.sid = $scope.phoneQueueStats.realtime.longest_task_waiting_sid;
+    $scope.longest_task.age = $scope.phoneQueueStats.realtime.longest_task_waiting_age;
+
+    var d = new Date();
+    d = new Date(d.getTime() + (Number($scope.longest_task.age) * 1000));
+
+    $scope.longest_task.startTime = (Number($scope.longest_task.age) * 1000);
+
+
+    // calls in queue
+    console.log($scope.phoneQueueStats.realtime.tasks_by_status.reserved);
+    console.log($scope.phoneQueueStats.realtime.tasks_by_status.pending);
+    $scope.callsInQueue = $scope.phoneQueueStats.realtime.tasks_by_status.reserved
+                         + $scope.phoneQueueStats.realtime.tasks_by_status.pending;
+
+    console.log($scope.callsInQueue);
+
+    $scope.$apply();
+  }
+
 
   $scope.listWorkers = function(){
 
