@@ -18,6 +18,22 @@
       <h2 class="page-header">Twilio Contact Center: Administration</h2>
 
       <div class="row">
+        <div class="col-md-6">
+          <h4>Longest Call Waiting:
+            <timer id="thetimer" ng-show="longest_task.age" start-time="longest_task.startTime" interval="1000">{{minutes}} mins, {{seconds}} secs</timer>
+            <span ng-show="!longest_task.age">no calls waiting!</span>
+          </h4>
+        </div>
+
+        <div class="col-md-6">
+          <h4>Calls in Queue:
+            <span>{{callsInQueue}}</span>
+          </h4>
+        </div>
+
+      </div>
+
+      <div class="row">
 
         <div class="col-md-6">
           <canvas id="activity_statistics" class="chart chart-pie"
@@ -165,7 +181,12 @@
 
 
   <div class="row">
-    
+    <h4>workspace stats</h4>
+    <pre>{{stats}}</pre>
+  </div>
+  <div class="row">
+    <h4>phone task queue stats</h4>
+    <pre>{{phoneQueueStats}}</pre>
   </div>
 
 </section>
@@ -180,6 +201,10 @@
 
 <script src="/scripts/Chart.min.js"></script>
 <script src="/scripts/angular-chart.min.js"></script>
+
+<script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
+<script src="/bower_components/humanize-duration/humanize-duration.js"></script>
+<script src="/bower_components/angular-timer/dist/angular-timer.min.js"></script>
 
 <script src="AdministrationController.js"></script>
 
