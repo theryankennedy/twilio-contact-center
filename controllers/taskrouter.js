@@ -19,7 +19,7 @@ module.exports.taskrouterEventCallBack = function (req, res) {
 	module.exports.syncWorkspaceStats()
 
 	const phoneTaskQueue = req.configuration.queues.filter((value) => {return value.id === 'phone'})
-	module.exports.syncTaskQueueStats(phoneTaskQueue.taskQueueSid)
+	module.exports.syncTaskQueueStats(phoneTaskQueue[0].taskQueueSid)
 
 	res.status(200);
 
@@ -30,7 +30,6 @@ module.exports.updatesync = function(req, res) {
 	module.exports.syncWorkspaceStats()
 
 	const phoneTaskQueue = req.configuration.queues.filter((value) => {return value.id === 'phone'})
-	
 	module.exports.syncTaskQueueStats(phoneTaskQueue[0].taskQueueSid)
 
 	res.status(200);
@@ -40,7 +39,6 @@ module.exports.syncWorkspaceStats = function () {
 
 	const workspaceStatsUrl = `https://${apiKey}:${apiSecret}@taskrouter.twilio.com/v1/Workspaces/${workspaceSid}/Statistics?Minutes=480`
 
-	console.log(workspaceStatsUrl)
 	request({ url: workspaceStatsUrl, method: 'GET' })
 		.then(response => {
 			console.log('got the workspace stats, pushing to sync');
@@ -59,10 +57,8 @@ module.exports.syncWorkspaceStats = function () {
 
 module.exports.syncTaskQueueStats = function (taskQueueSid) {
 
-	console.log(`taskQueueSid=${taskQueueSid}`)
 	const statsUrl = `https://${apiKey}:${apiSecret}@taskrouter.twilio.com/v1/Workspaces/${workspaceSid}/TaskQueues/${taskQueueSid}/Statistics?Minutes=480`
 
-	console.log(statsUrl)
 	request({ url: statsUrl, method: 'GET' })
 		.then(response => {
 			console.log('got the taskQueues stats, pushing to sync');

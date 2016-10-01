@@ -1,17 +1,37 @@
-var app = angular.module('administrationApplication', ['checklist-model', 'chart.js', 'timer']);
+var app = angular.module('administrationApplication', ['checklist-model', 'chart.js']);
 
-app.controller('AdministrationController', function ($scope, $http, $log) {
+app.controller('AdministrationController', function ($scope, $http, $log, $interval) {
 
   $scope.init = function(){
 
     $scope.tab = 'agents';
-
     $scope.channels = {
       phone: 'Phone',
       chat: 'Chat',
       video: 'Video'
     };
 
+    // DISABLED:  poll the endpoint to update the sync data
+    var stop;
+    $scope.updateStats = function() {
+      // Don't start a new poll if we are already polling
+      if ( angular.isDefined(stop) ) return;
+
+      stop = $interval(function() {
+        console.log('calling endpoint')
+        $http.get('/api/taskrouter/updatesync');
+      }, 5000);
+    };
+    $scope.stopPoll = function() {
+      if (angular.isDefined(stop)) {
+        $interval.cancel(stop);
+        stop = undefined;
+      }
+    };
+    $scope.$on('$destroy', function() {
+      // Make sure that the interval is destroyed too
+      $scope.stopPoll();
+    });
 
     $scope.syncDoc = null;
     $scope.stats = {};
@@ -39,7 +59,7 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
     $scope.tasks_by_status_options = {
         title: {
           display : true,
-          text : "current calls"
+          text : "queue status"
         },
         scales: {
             yAxes: [{
@@ -69,12 +89,33 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
         }
     };
 
+    //timer with interval
+    $scope.timerWithInterval = 0;
+    $scope.startTimerWithInterval = function(ms) {
+     $scope.timerWithInterval = ms || 0;
+     if($scope.myInterval){
+       $interval.cancel($scope.myInterval);
+     }
+     $scope.onInterval = function(){
+         $scope.timerWithInterval++;
+     }
+     $scope.myInterval = $interval($scope.onInterval,1000);
+    };
+
+    $scope.resetTimerWithInterval = function(){
+     $scope.timerWithInterval = 0;
+     $interval.cancel($scope.myInterval);
+    }
+
     // update get the latest data into sync
     $http.get('/api/taskrouter/updatesync')
 
     // get a sync access token
     $http.get('https://rkennedy2.ngrok.io/token')
       .then(function onSuccess(response) {
+
+        // start the poll
+        //$scope.updateStats();
 
         const accessManager = new Twilio.AccessManager(response.data.token);
         $scope.client = new Twilio.Sync.Client(accessManager);
@@ -177,11 +218,6 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
         cumulative.reservations_timed_out
     ];
 
-    // longest call waiting
-    //$scope.longest_task.sid = $scope.stats.realtime.longest_task_waiting_sid;
-    //$scope.longest_task.age = $scope.stats.realtime.longest_task_waiting_age;
-    //$scope.longest_task.startTime = Date.now() + (Number($scope.stats.realtime.longest_task_waiting_age) * 1000);
-
     $scope.$apply();
   }
 
@@ -191,20 +227,10 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
     // longest call waiting
     $scope.longest_task.sid = $scope.phoneQueueStats.realtime.longest_task_waiting_sid;
     $scope.longest_task.age = $scope.phoneQueueStats.realtime.longest_task_waiting_age;
-
-    var d = new Date();
-    d = new Date(d.getTime() + (Number($scope.longest_task.age) * 1000));
-
-    $scope.longest_task.startTime = (Number($scope.longest_task.age) * 1000);
-
+    $scope.startTimerWithInterval($scope.longest_task.age);
 
     // calls in queue
-    console.log($scope.phoneQueueStats.realtime.tasks_by_status.reserved);
-    console.log($scope.phoneQueueStats.realtime.tasks_by_status.pending);
-    $scope.callsInQueue = $scope.phoneQueueStats.realtime.tasks_by_status.reserved
-                         + $scope.phoneQueueStats.realtime.tasks_by_status.pending;
-
-    console.log($scope.callsInQueue);
+    $scope.callsInQueue = $scope.phoneQueueStats.realtime.tasks_by_status.pending;
 
     $scope.$apply();
   }
@@ -355,4 +381,19 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
 
   };
 
+});
+
+app.filter('hhmmss', function () {
+  return function (time) {
+    var sec_num = parseInt(time, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
+  }
 });
