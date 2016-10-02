@@ -1,6 +1,7 @@
 'use strict'
 
 const twilio 	= require('twilio')
+const request = require('request-promise')
 
 /* client for Twilio Programmable Voice / SMS */
 const client = new twilio(
@@ -26,6 +27,11 @@ module.exports.validateSetup = function (req, res) {
 
 	if (!process.env.TWILIO_WORKSPACE_SID || process.env.TWILIO_WORKSPACE_SID.length !== 34) {
 		res.status(500).json({ code: 'TWILIO_WORKSPACE_SID_INVALID'})
+		return
+	}
+
+	if (!process.env.TWILIO_SYNC_SERVICE_SID || process.env.TWILIO_SYNC_SERVICE_SID.length !== 34) {
+		res.status(500).json({ code: 'TWILIO_SYNC_SERVICE_SID_INVAILD'})
 		return
 	}
 
@@ -126,6 +132,51 @@ module.exports.validatePhoneNumber = function (req, res) {
 		var capabilities = data.incomingPhoneNumbers[0].capabilities
 
 		res.status(200).json({sid: sid, capabilities: capabilities})
+
+	})
+
+}
+
+
+var validateSyncDocs = function () {
+
+	return new Promise(function (resolve, reject) {
+
+		const apiKey = process.env.TWILIO_API_KEY
+		const apiSecret = process.env.TWILIO_API_SECRET
+		const syncSerivceSid = process.env.TWILIO_SYNC_SERVICE_SID
+		const docName = 'WorkspaceStats';
+		const url = `https://${apiKey}:${apiSecret}@preview.twilio.com/Sync/Services/${syncAppSid}/Documents/${docName}`
+
+		request({ url: url, method: 'GET' })
+			.then(response => {
+				resolve()
+			})
+			.catch(err => {
+				reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
+			})
+
+		request({ url: workspaceStatsUrl, method: 'GET' })
+			.then(response => {
+				console.log('got the workspace stats, pushing to sync');
+				const data = { Data : response }
+				return request({ url: url, method: 'POST', formData: data})
+			})
+			.then(response => {
+					console.log('workspace stats sent to sync successfully')
+			})
+			.catch(err => {
+					console.log('error posting workspaceStats to sync: ' + err)
+			})
+
+
+		taskrouterClient.workspace.get(function (err, workspace) {
+			if (err) {
+				reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
+			} else {
+				resolve()
+			}
+		})
 
 	})
 

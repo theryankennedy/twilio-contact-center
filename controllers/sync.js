@@ -1,0 +1,40 @@
+const AccessToken = require('../twilio-node/index.js').jwt.AccessToken;
+const SyncGrant = AccessToken.SyncGrant;
+const randomUsername = require('../randos');
+
+/*
+Generate an Access Token for a sync application user - it generates a random
+username for the client requesting a token, and takes a device ID as a query
+parameter.
+*/
+module.exports.token = function(request, response) {
+  let appName = 'twilio-contact-center';
+  let identity = randomUsername();
+  let deviceId = request.query.device;
+
+  // Create a unique ID for the client on their current device
+  let endpointId = `${appName}:${identity}:${deviceId}`;
+
+  // Create a "grant" which enables a client to use Sync as a given user,
+  // on a given device
+  let syncGrant = new SyncGrant({
+    serviceSid: process.env.TWILIO_SYNC_SERVICE_SID,
+    endpointId: endpointId
+  });
+
+  // Create an access token which we will sign and return to the client,
+  // containing the grant we just created
+  let token = new AccessToken(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_API_KEY,
+    process.env.TWILIO_API_SECRET
+  );
+  token.addGrant(syncGrant);
+  token.identity = identity;
+
+  // Serialize the token to a JWT string and include it in a JSON response
+  response.send({
+    identity: identity,
+    token: token.toJwt()
+  });
+}

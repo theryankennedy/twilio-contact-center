@@ -98,9 +98,15 @@ var messagingAdapter = require('./controllers/messaging-adapter.js')
 router.route('/messaging-adapter/inbound').post(messagingAdapter.inbound)
 router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
 
+/* routes for sync */
+var sync = require('./controllers/sync.js')
+
+router.route('/sync/token').get(sync.token)
+
+
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
-app.use('/bower_components',  express.static( path.join(__dirname, '/bower_components')))
+//app.use('/bower_components',  express.static( path.join(__dirname, '/bower_components')))
 
 app.listen(app.get('port'), function () {
 	console.log('magic happens on port', app.get('port'))

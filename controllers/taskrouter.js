@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const apiKey = process.env.TWILIO_API_KEY;
 const apiSecret = process.env.TWILIO_API_SECRET;
 const workspaceSid = process.env.TWILIO_WORKSPACE_SID;
-const syncAppSid = process.env.TWILIO_SYNC_APP_SID;
+const syncAppSid = process.env.TWILIO_SYNC_SERVICE_SID;
 
 module.exports.assignment = function (req, res) {
 	res.setHeader('Content-Type', 'application/json')

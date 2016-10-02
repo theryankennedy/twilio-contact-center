@@ -111,7 +111,8 @@ app.controller('AdministrationController', function ($scope, $http, $log, $inter
     $http.get('/api/taskrouter/updatesync')
 
     // get a sync access token
-    $http.get('https://rkennedy2.ngrok.io/token')
+    // https://rkennedy2.ngrok.io/token
+    $http.get('/api/sync/token')
       .then(function onSuccess(response) {
 
         // start the poll

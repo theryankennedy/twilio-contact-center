@@ -9,29 +9,30 @@ curl -X POST https://preview.twilio.com/Sync/Services \
  -d 'FriendlyName=ContactCenterSyncServiceInstance' \
  -u $TWILIO_API_KEY:$TWILIO_API_SECRET
 ```
-* add syncAppSid to configuration.json (in twilio section, user in taskrouter.js controller line 17)
-* add $TWILIO_SYNC_APP_SID to your environmental variables
+* add $TWILIO_SYNC_SERVICE_SID to your environmental variables
 * create a sync document named WorkspaceStats
 ```
-curl -X POST https://preview.twilio.com/Sync/Services/{syncServiceSid}/Documents \
+curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_SERVICE_SID/Documents \
  -d 'UniqueName=WorkspaceStats' \
  -d 'Data={}'  \
  -u $TWILIO_API_KEY:$TWILIO_API_SECRET
 ```
 * create a sync document named PhoneTaskQueueStats
 ```
-curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_APP_SID/Documents \
+curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_SERVICE_SID/Documents \
  -d 'UniqueName=PhoneTaskQueueStats' \
  -d 'Data={}'  \
  -u $TWILIO_API_KEY:$TWILIO_API_SECRET
 ```
 * stand up and run a separate sync token server (couldn't integrate because of version issues)
 * change sync token server url hardcoded in code (AdministrationController line 63)
-* set taskrouter workspace EventCallbackUrl to api/taskrouter/taskrouterEventCallBack and select all events (in console)
-* npm install to get request-promise
+* set taskrouter workspace EventCallbackUrl to {yourUrl}/api/taskrouter/taskrouterEventCallBack and select all events (in console)
+* npm install
+* cd twilio-node && npm install
 
-### new components
-* angular-chart: https://jtblin.github.io/angular-chart.js/#getting_started
+### notes on new stuff
+* The entire twilio-node next-gen library is included in this project to access Sync token generation.
+* angular-chart is used for charts: https://jtblin.github.io/angular-chart.js/#getting_started
 
 
 # Twilio Contact Center Demo
