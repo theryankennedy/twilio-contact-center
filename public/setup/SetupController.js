@@ -1,7 +1,7 @@
 var app = angular.module('setupApplication', ['ngMessages']);
 
 app.controller('SetupController', function ($scope, $http, $q) {
-  
+
   $scope.phoneNumber    = { isValid: true, message: null, code: null};
   $scope.isSaving       = false;
   $scope.configuration  = null;
@@ -56,7 +56,7 @@ app.controller('SetupController', function ($scope, $http, $q) {
       });
 
   };
-  
+
   $scope.saveConfig = function(){
     $scope.phoneNumber.isValid = true;
     $scope.isSaving = true;
@@ -104,4 +104,4 @@ app.controller('SetupController', function ($scope, $http, $q) {
 
   };
 
-});  
+});

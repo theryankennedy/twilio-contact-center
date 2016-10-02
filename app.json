@@ -5,7 +5,7 @@
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": ["node", "express", "twilio"],
   "image": "heroku/nodejs",
-  "repository": "https://github.com/nash-md/twilio-contact-center",
+  "repository": "https://github.com/theryankennedy/twilio-contact-center",
   "addons": ["heroku-postgresql:hobby-dev"],
   "scripts": {
     "postdeploy": "node setup-database.js"
@@ -35,6 +35,10 @@
      "TWILIO_API_SECRET": {
       "description": "IP Messaging API Secret",
       "value": "apiSecret"
+    },
+     "TWILIO_SYNC_SERVICE_SID": {
+      "description": "Sync service sid.  See the README to learn where to get this",
+      "value": "syncServiceSid"
     }
 
   }

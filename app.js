@@ -102,7 +102,8 @@ router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
 var sync = require('./controllers/sync.js')
 
 router.route('/sync/token').get(sync.token)
-
+router.route('/sync/createservice').get(sync.createSyncService)
+router.route('/sync/createdocs').get(sync.createSyncDocs)
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
