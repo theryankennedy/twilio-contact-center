@@ -8,7 +8,7 @@
   "repository": "https://github.com/theryankennedy/twilio-contact-center",
   "addons": ["heroku-postgresql:hobby-dev"],
   "scripts": {
-    "postdeploy": "node setup-database.js"
+    "postdeploy": "node setup-database.js && cd twilio-node && npm install"
   },
   "success_url": "/setup",
   "env": {

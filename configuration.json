@@ -1,0 +1,46 @@
+{
+	"ivr": {
+		"text": "Welcome to my call center, please press 1 for sales, press 2 for support",
+		"options": [
+			{
+				"friendlyName": "Sales",
+				"digit": 1,
+				"id": "sales"
+			},
+			{
+				"friendlyName": "Support",
+				"digit": 2,
+				"id": "support"
+			}
+		]
+	},
+	"queues": [
+		{
+			"friendlyName": "Chat Queue",
+			"id": "chat",
+			"taskQueueSid": null,
+			"expression": "channel == \"chat\"",
+			"targetWorkerExpression": ""
+		},
+		{
+			"friendlyName": "Phone Queue",
+			"id": "phone",
+			"taskQueueSid": null,
+			"expression": "channel == \"phone\"",
+			"targetWorkerExpression": "task.team == worker.team"
+		},
+		{
+			"friendlyName": "Video Queue",
+			"id": "phone",
+			"taskQueueSid": null,
+			"expression": "channel == \"video\"",
+			"targetWorkerExpression": "task.team == worker.team"
+		}
+	],
+	"twilio": {
+		"workerOfflineActivitySid": null,
+		"workerIdleActivitySid": null,
+		"workerReservationActivitySid": null,
+		"workerAssignmentActivitySid": null
+	}
+}
