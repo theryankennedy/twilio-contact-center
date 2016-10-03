@@ -1,36 +1,3 @@
-### Dot files ###
-.*
 
-### linting ###
-!/.jshintrc
-!/.jscs
-
-### Git ###
-!/.gitignore
-!/.gitmodules
-
-### Logs ###
-logs
-*.log
-
-### Runtime data ###
-pids
-*.pid
-*.seed
-
-### NPM modules ###
-node_modules
-
-### Travis ###
-!/.travis.yml
-
-### Test coverage ###
-spec/coverage
-
-### Custom ignores ###
-config.js
-.idea
-
-### jsdoc dir ###
-out/
-
+# Make sure to include everything in node_modules.
+!node_modules/**
