@@ -3,7 +3,6 @@ const SyncGrant = AccessToken.SyncGrant
 const randomUsername = require('../randos')
 const request = require('request-promise')
 
-
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const syncServiceSid = process.env.TWILIO_SYNC_SERVICE_SID
 const apiKey = process.env.TWILIO_API_KEY

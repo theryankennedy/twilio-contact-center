@@ -1,34 +1,17 @@
-## UPDATES - still in progress
+## UPDATES
 * Added realtime dashboard components on administration page
 * Twilio Sync integration to power the dashboard
 
 ### extra setup (after usual app setup)
-* create a sync service instance (currently only possible via api)
-```
-curl -X POST https://preview.twilio.com/Sync/Services \
- -d 'FriendlyName=ContactCenterSyncServiceInstance' \
- -u $TWILIO_API_KEY:$TWILIO_API_SECRET
-```
+* create a sync service instance
+ * Go to http://<your_application_name>/api/sync/createservice and git save the 'sid'.  This will be your TWILIO_SYNC_SERVICE_SID
 * add $TWILIO_SYNC_SERVICE_SID to your environmental variables
-* create a sync document named WorkspaceStats
-```
-curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_SERVICE_SID/Documents \
- -d 'UniqueName=WorkspaceStats' \
- -d 'Data={}'  \
- -u $TWILIO_API_KEY:$TWILIO_API_SECRET
-```
-* create a sync document named PhoneTaskQueueStats
-```
-curl -X POST https://preview.twilio.com/Sync/Services/$TWILIO_SYNC_SERVICE_SID/Documents \
- -d 'UniqueName=PhoneTaskQueueStats' \
- -d 'Data={}'  \
- -u $TWILIO_API_KEY:$TWILIO_API_SECRET
-```
-* stand up and run a separate sync token server (couldn't integrate because of version issues)
-* change sync token server url hardcoded in code (AdministrationController line 63)
-* set taskrouter workspace EventCallbackUrl to {yourUrl}/api/taskrouter/taskrouterEventCallBack and select all events (in console)
-* npm install
-* cd twilio-node && npm install
+* create a sync documents
+ * Go to http://<your_application_name>/api/sync/createdocs
+* set taskrouter workspace EventCallbackUrl to http://<your_application_name>/api/taskrouter/taskrouterEventCallBack and select all events (in console)
+
+* if you are running locally: npm install
+
 
 ### notes on new stuff
 * The entire twilio-node next-gen library is included in this project to access Sync token generation.
@@ -98,8 +81,6 @@ We recommend you create a separate sub-account within Twilio and install this ap
 ## One Click Install - Heroku
 
 This will install the application and all the dependencies on Heroku (login required) for you. As part of the installation, the Heroku app will walk you through configuration of environment variables.  Please click on the following button to deploy the application.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/theryankennedy/twilio-contact-center)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
