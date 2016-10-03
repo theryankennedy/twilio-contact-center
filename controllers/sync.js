@@ -5,7 +5,7 @@ const request = require('request-promise')
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID
-const syncSerivceSid = process.env.TWILIO_SYNC_SERVICE_SID
+const syncServiceSid = process.env.TWILIO_SYNC_SERVICE_SID
 const apiKey = process.env.TWILIO_API_KEY
 const apiSecret = process.env.TWILIO_API_SECRET
 
