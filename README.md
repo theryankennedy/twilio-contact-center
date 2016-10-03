@@ -4,10 +4,10 @@
 
 ### extra setup (after usual app setup)
 * create a sync service instance
- * Go to http://<your_application_name>/api/sync/createservice and git save the 'sid'.  This will be your TWILIO_SYNC_SERVICE_SID
+ * Go to http://{your_application_name}/api/sync/createservice and git save the 'sid'.  This will be your TWILIO_SYNC_SERVICE_SID
 * add $TWILIO_SYNC_SERVICE_SID to your environmental variables
 * create a sync documents
- * Go to http://<your_application_name>/api/sync/createdocs
+ * Go to http://{your_application_name}/api/sync/createdocs
 * set taskrouter workspace EventCallbackUrl to http://<your_application_name>/api/taskrouter/taskrouterEventCallBack and select all events (in console)
 
 * if you are running locally: npm install
