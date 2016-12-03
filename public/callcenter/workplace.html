@@ -21,7 +21,7 @@
 
       <div class="panel-body">
 
-        <div class="logout"><span ng-click="logout()">logout</span></div> 
+        <div class="logout"><span ng-click="logout()">logout</span></div>
         <h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
 
         <div>Status:&nbsp;<span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
@@ -58,7 +58,7 @@
       <!-- agent is waiting for new reservation -->
 
       <!-- agent is working on a task -->
-      <div class="panel panel-default agent-task" ng-show="task != null"> 
+      <div class="panel panel-default agent-task" ng-show="task != null">
 
         <div class="panel-heading">
 
@@ -67,17 +67,34 @@
         </div>
 
         <div class="panel-body">
-            <div class="description">{{task.attributes.title}} from 
+            <div class="description">{{task.attributes.title}} from
               <span ng-show="!task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</span>
-              
-              <a href="#" ng-click="callPhoneNumber('{{task.attributes.name}}')"" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
+
+              <a href="#" ng-click="callPhoneNumber('{{task.attributes.name}}')" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
             </div>
             {{task.attributes.text}}
         </div>
 
+        <!-- videoClient -->
+        <section ng-show="session.showVideo" class="video-controller" ng-controller="VideoController" ng-cloak>
+          <div id="remote-media"></div>
+          <div id="controls">
+            <div id="preview">
+              <div id="local-media"></div>
+              <!--<button id="button-preview">Preview My Camera</button>-->
+            </div>
+            <!--
+            <div id="room-controls">
+              <button id="button-join">Join Room</button>
+              <button id="button-leave">Leave Room</button>    
+            </div>
+            -->
+          </div>
+        </section>
+
         <!-- chat -->
         <section ng-show="session.channelSid" class="chat-controller" ng-controller="ChatController" ng-cloak>
-          
+
            <div class="load-indicator" ng-show="session.isLoading">
               <i class="fa fa-refresh fa-spin"></i>
            </div>
@@ -123,7 +140,7 @@
               </div>
             </form>
 
-          </div>  
+          </div>
 
         </section>
         <!-- chat -->
@@ -132,7 +149,7 @@
       <!-- agent is working on a task -->
 
     </div>
-     
+
     <section ng-controller="PhoneController" ng-cloak class="phone-controller" >
 
       <input style="font-size:2em; padding-left:10px;" ng-show="isActive == false" ng-model="phoneNumber" type="text" name="phoneNumber" placeholder="+.." />
@@ -176,6 +193,7 @@
   <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.7/taskrouter.min.js"></script>
   <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.js"></script>
   <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
+  <script src="//media.twiliocdn.com/sdk/js/video/releases/1.0.0-beta2/twilio-video.js"></script>
   <script src="/scripts/angular.min.js"></script>
   <script src="/scripts/angular-messages.min.js"></script>
   <script src="/scripts/angular-scrollglue.js"></script>
@@ -183,6 +201,7 @@
   <script src="WorkflowController.js"></script>
   <script src="PhoneController.js"></script>
   <script src="ChatController.js"></script>
+  <script src="VideoController.js"></script>
 
 
 </body>

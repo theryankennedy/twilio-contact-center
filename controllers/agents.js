@@ -57,10 +57,25 @@ module.exports.login = function (req, res) {
 				accessToken.addGrant(grant)
 				accessToken.identity = worker.friendlyName
 
+
+				// Twilio Video token
+		    var videoToken = new twilio.AccessToken(
+		        process.env.TWILIO_ACCOUNT_SID,
+		        process.env.TWILIO_API_KEY,
+		        process.env.TWILIO_API_SECRET
+		    );
+		    videoToken.identity = worker.friendlyName;
+
+				var videoGrant = new twilio.AccessToken.VideoGrant();
+		    videoGrant.configurationProfileSid = process.env.TWILIO_CONFIGURATION_SID;
+		    videoToken.addGrant(videoGrant);
+
+
 				var tokens = {
 					worker: workerCapability.generate(lifetime),
 					phone: phoneCapability.generate(lifetime),
-					chat: accessToken.toJwt()
+					chat: accessToken.toJwt(),
+					video: videoToken.toJwt()
 				}
 
 				req.session.tokens = tokens

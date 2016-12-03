@@ -63,6 +63,7 @@ var tasks = require('./controllers/tasks.js')
 
 router.route('/tasks/callback').post(tasks.createCallback)
 router.route('/tasks/chat').post(tasks.createChat)
+router.route('/tasks/video').post(tasks.createVideoTask)
 
 /* routes for agent interface and phone */
 var agents = require('./controllers/agents.js')
@@ -104,6 +105,10 @@ var sync = require('./controllers/sync.js')
 router.route('/sync/token').get(sync.token)
 router.route('/sync/createservice').get(sync.createSyncService)
 router.route('/sync/createdocs').get(sync.createSyncDocs)
+
+// video
+var video = require('./controllers/video.js')
+router.route('/video/token').get(video.token)
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))

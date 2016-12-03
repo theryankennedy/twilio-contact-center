@@ -30,6 +30,29 @@ module.exports.createCallback = function (req, res) {
 
 }
 
+module.exports.createVideoTask = function (req, res) {
+
+	taskrouterClient.workspace.tasks.create({
+		WorkflowSid: req.configuration.twilio.workflowSid,
+		attributes: JSON.stringify({
+			title: 'Video chat request',
+			text: 'Customer entered video chat via support page',
+			channel: 'video',
+			endpoint: 'web',
+			team: 'sales',
+			room: req.body.room,
+			name: req.body.name
+		}), timeout: 3600
+	}, function (err) {
+		if (err) {
+			res.status(500).json(err)
+		} else {
+			res.status(200).end()
+		}
+	})
+
+}
+
 module.exports.createChat = function (req, res) {
 	/* create a chat room */
 	async.waterfall([

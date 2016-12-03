@@ -55,8 +55,11 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       /* initialize Twilio IP Messaging client with token received from the backend */
       $scope.$broadcast('InitializeChat', { token: response.data.tokens.chat, identity: response.data.worker.friendlyName});
 
-    }, function onError(response) { 
-      
+      /* initialize Twilio Video client with token received from the backend */
+      //$scope.$broadcast('InitializeVideo', { token: response.data.tokens.video, identity: response.data.worker.friendlyName});
+
+    }, function onError(response) {
+
       /* session is not valid anymore */
       if(response.status == 403){
          window.location.replace('/callcenter/');
@@ -105,7 +108,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
       if (pattern.test($scope.task.attributes.name) == true) {
         $scope.task.attributes.nameIsPhoneNumber = true;
-      }  
+      }
 
       $scope.task.completed = false;
       $scope.reservation = null;
@@ -203,7 +206,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       reservation.dequeue($scope.configuration.twilio.callerId);
 
     }
-    
+
     /* we accept the reservation and initiate a call to the customer's phone number */
     if(reservation.task.attributes.channel == 'phone' && reservation.task.attributes.type == 'callback_request'){
 
@@ -214,12 +217,30 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
           if(err) {
             $log.error(err);
             return;
-          }  
+          }
 
           $scope.$broadcast('CallPhoneNumber', { phoneNumber: reservation.task.attributes.phone });
 
         });
     }
+
+    if(reservation.task.attributes.channel == 'video') {
+
+      reservation.accept(
+
+        function(err, reservation) {
+
+          if(err) {
+            $log.error(err);
+            return;
+          }
+
+          $scope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.room });
+
+        });
+
+    }
+
   };
 
   $scope.complete = function (reservation) {
@@ -228,12 +249,16 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       $scope.$broadcast('DestroyChat');
     }
 
+    if($scope.task.attributes.channel == 'video'){
+      $scope.$broadcast('DestroyVideo');
+    }
+
     $scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {
 
       if(err) {
         $log.error(err);
         return;
-      } 
+      }
 
       $scope.reservation = null;
       $scope.task = null;
@@ -255,7 +280,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
       window.location.replace('/callcenter/index.html');
 
-    }, function onError(response) { 
+    }, function onError(response) {
 
       $log.error(response);
 
@@ -280,10 +305,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       $interval.cancel($scope.reservationInterval);
       $scope.reservationInterval = undefined;
     }
-    
+
   };
 
-});  
-
-
-  
+});

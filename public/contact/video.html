@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Twilio Contact Center: Live Video</title>
+
+	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/styles/default.css" type="text/css" />
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+	type="text/css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+	<div class="container" style="max-width:960px">
+
+		<div class="row">
+			<div class="page-header col-md-12">
+				<h2>Twilio Contact Center: Live Video</h2>
+			</div>
+		</div>
+
+		<section class="row">
+
+			<div class="col-md-8">
+
+				<section>
+						<div id="remote-media"></div>
+					  <div id="controls">
+
+					    <div id="preview">
+					      <div id="local-media-contact"></div>
+					      <!--<button id="button-preview">Preview My Camera</button>-->
+					    </div>
+					    <div id="room-controls">
+					      <p class="instructions">What's your name?</p>
+					      <input id="room-name" type="text" placeholder="your name" />
+					      <button id="button-join">Join Room</button>
+					    </div>
+							<div>
+								<button id="button-leave">Leave Room</button>
+							</div>
+					    <div id="log"></div>
+					  </div>
+
+					</div>
+
+				</section>
+
+			</div>
+
+		</section>
+
+	</div>
+
+	<script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+  <script src="//media.twiliocdn.com/sdk/js/video/releases/1.0.0-beta2/twilio-video.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="quickstart.js"></script>
+
+</body>
+</html>
